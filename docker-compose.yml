@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  nginx-php-fpm:
+    image: richarvey/nginx-php-fpm:1.9.1
+    restart: always
+    ports:
+      - 8000:80
+    environment:
+      WEBROOT: '/var/www/laravel/public'
+      PHP_CATCHALL: 1
+    volumes:
+      - ./www:/var/www/laravel
+  database:
+    image: mysql:5.7 
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=laravel
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=@admin
+      - MYSQL_ROOT_PASSWORD=@root
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+        - 8890:80
+    environment:
+        - PMA_ARBITRARY=1
+        - PMA_HOST=database
+    restart: always
+    depends_on:
+        - database
